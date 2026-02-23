@@ -16,6 +16,12 @@
   ul {
     padding: 0;
     list-style: none;
+
+    /* sub-menu */
+    ul {
+      padding-left: 1rem;
+      margin: 0.5rem 0;
+    }
   }
 
   .page__spacer--large {
