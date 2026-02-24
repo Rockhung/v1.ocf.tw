@@ -7,14 +7,14 @@ toc: false
 ---
 
 <div class="ui styled fluid accordion">
-  <div class="title">
+  <div class="title active">
     <i class="dropdown icon"></i>
     最新文章
     <a href="/feed.xml" target="_blank" class="ui mini label orange" style="float: right;">
       <i class="rss icon"></i> RSS 訂閱
     </a>
   </div>
-  <div class="content">
+  <div class="content active">
     <div class="ui list">
     {% for item in site.data.about.story %}
 
@@ -34,11 +34,11 @@ toc: false
     </div>
   </div>
 
-  <div class="title">
+  <div class="title active">
     <i class="dropdown icon"></i>
     媒體報導
   </div>
-  <div class="content">
+  <div class="content active">
     <div class="ui list">
     {% for item in site.data.about.ocf %}
       <div class="item">
@@ -56,11 +56,11 @@ toc: false
     </div>
   </div>
 
-  <div class="title">
+  <div class="title active">
     <i class="dropdown icon"></i>
     開源 / 開放文化相關報導
   </div>
-  <div class="content">
+  <div class="content active">
     <div class="ui list">
     {% for item in site.data.about.floss %}
       <div class="item">
