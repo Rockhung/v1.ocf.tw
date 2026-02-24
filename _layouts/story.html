@@ -28,6 +28,7 @@ layout: global
   <div class="stripe ui container">
     <div class="ui two column stackable grid">
 
+      {% unless page.toc == false %}
       <div class="four wide column">
         <nav class="ui secondary vertical fluid text menu" id="table-of-contents">
           <div class="header item">目次</div>
@@ -37,9 +38,9 @@ layout: global
           {% endfor %}
         </nav>
       </div>
+      {% endunless %}
 
-
-      <div class="twelve wide column" id="content">
+      <div class="{% if page.toc == false %}sixteen{% else %}twelve{% endif %} wide column" id="content">
         {% assign content_without_h1 = content | replace: '<h1', '<!-- <h1' | replace: '</h1>', '</h1> -->' %}
         {{ content_without_h1 }}
       </div>

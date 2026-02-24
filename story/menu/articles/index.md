@@ -3,6 +3,7 @@ layout: story
 og_title: 最新消息
 og_description: "這裡有最新文章、新聞報導"
 og_image: 
+toc: false
 ---
 
 <div class="ui styled fluid accordion">
