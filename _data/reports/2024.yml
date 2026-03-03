@@ -6,6 +6,7 @@ color:
 cover_image_opacity:
 cover_veil_opacity:
 alignment: left
+pdf: https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf
 items:
 
 #  - type: content

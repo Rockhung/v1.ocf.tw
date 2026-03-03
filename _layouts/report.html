@@ -75,6 +75,14 @@ layout: global
     <hr class="ui hidden divider" />
   </header>
 
+  <!-- 如果報告指定了 pdf 則顯示 PDF 內嵌，否則從成果報告資料產生各展示區塊 -->
+  {% if report.pdf %}
+  <div class="ui container center aligned" style="padding: 2rem 0; max-width: 1280px;">
+    <div style="position: relative; overflow: auto; -webkit-overflow-scrolling: touch; width: 100%; height: 85vh; min-height: 600px; max-height: 1200px;">
+      <iframe src="{{ report.pdf | relative_url }}" width="100%" height="100%" style="border: 1px solid #ccc; box-shadow: 0 4px 8px rgba(0,0,0,0.1); display: block;" allowfullscreen></iframe>
+    </div>
+  </div>
+  {% else %}
   <!-- 從成果報告資料產生各展示區塊 -->
   {% for item in report.items %}
 
@@ -386,6 +394,7 @@ layout: global
   </div>
   {% endif %}
   {% endfor %}
+  {% endif %}
 
   <!-- 最後放上無所不在的捐款廣告 -->
   {% if page.lang == "en" %}
