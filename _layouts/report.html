@@ -75,6 +75,112 @@ layout: global
     <hr class="ui hidden divider" />
   </header>
 
+  <!-- 如果報告指定了 pdf 則顯示 PDF 內嵌，否則從成果報告資料產生各展示區塊 -->
+  {% if report.pdf %}
+  <div class="ui container center aligned" style="padding: 2rem 0; width: 100%; max-width: 1280px;">
+    <div id="pdf-container" style="display: flex; flex-direction: column; align-items: center; background: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+      <div id="pdf-controls" style="margin-bottom: 15px; display: flex; gap: 15px; align-items: center;">
+        <button id="prev-page" class="ui button basic"><i class="left arrow icon"></i> 上一頁</button>
+        <span style="font-size: 1.1em;">第 <span id="page-num"></span> 頁 / 共 <span id="page-count"></span> 頁</span>
+        <button id="next-page" class="ui button basic">下一頁 <i class="right arrow icon"></i></button>
+      </div>
+      <canvas id="pdf-render" style="max-width: 100%; height: auto; border: 1px solid #ccc;"></canvas>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script>
+    const url = '{{ report.pdf }}';
+    let pdfDoc = null,
+        pageNum = 1,
+        pageIsRendering = false,
+        pageNumIsPending = null;
+
+    const scale = 1.5,
+          canvas = document.getElementById('pdf-render'),
+          ctx = canvas.getContext('2d');
+
+    // Setup worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+    // Render the page
+    const renderPage = num => {
+      pageIsRendering = true;
+
+      // Get page
+      pdfDoc.getPage(num).then(page => {
+        // Set scale depending on window width to make it responsive
+        const viewport = page.getViewport({ scale: scale });
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        const renderCtx = {
+          canvasContext: ctx,
+          viewport: viewport
+        };
+
+        page.render(renderCtx).promise.then(() => {
+          pageIsRendering = false;
+
+          if (pageNumIsPending !== null) {
+            renderPage(pageNumIsPending);
+            pageNumIsPending = null;
+          }
+        });
+
+        // Output current page
+        document.getElementById('page-num').textContent = num;
+      });
+    };
+
+    // Check for pages rendering
+    const queueRenderPage = num => {
+      if (pageIsRendering) {
+        pageNumIsPending = num;
+      } else {
+        renderPage(num);
+      }
+    };
+
+    // Show Prev Page
+    const showPrevPage = () => {
+      if (pageNum <= 1) {
+        return;
+      }
+      pageNum--;
+      queueRenderPage(pageNum);
+    };
+
+    // Show Next Page
+    const showNextPage = () => {
+      if (pageNum >= pdfDoc.numPages) {
+        return;
+      }
+      pageNum++;
+      queueRenderPage(pageNum);
+    };
+
+    // Get Document
+    pdfjsLib.getDocument(url).promise.then(pdfDoc_ => {
+      pdfDoc = pdfDoc_;
+      document.getElementById('page-count').textContent = pdfDoc.numPages;
+
+      renderPage(pageNum);
+    }).catch(err => {
+      // Display error
+      const div = document.createElement('div');
+      div.className = 'ui error message';
+      div.appendChild(document.createTextNode(err.message));
+      document.getElementById('pdf-container').insertBefore(div, canvas);
+      document.getElementById('pdf-controls').style.display = 'none';
+      canvas.style.display = 'none';
+    });
+
+    // Button Events
+    document.getElementById('prev-page').addEventListener('click', showPrevPage);
+    document.getElementById('next-page').addEventListener('click', showNextPage);
+  </script>
+  {% else %}
   <!-- 從成果報告資料產生各展示區塊 -->
   {% for item in report.items %}
 
@@ -386,6 +492,7 @@ layout: global
   </div>
   {% endif %}
   {% endfor %}
+  {% endif %}
 
   <!-- 最後放上無所不在的捐款廣告 -->
   {% if page.lang == "en" %}
