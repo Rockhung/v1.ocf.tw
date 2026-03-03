@@ -90,7 +90,7 @@ layout: global
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
   <script>
-    const url = '{{ report.pdf }}';
+    const url = '{{ report.pdf | relative_url }}';
     let pdfDoc = null,
         pageNum = 1,
         pageIsRendering = false,
@@ -168,12 +168,14 @@ layout: global
       renderPage(pageNum);
     }).catch(err => {
       // Display error
-      const div = document.createElement('div');
-      div.className = 'ui error message';
-      div.appendChild(document.createTextNode(err.message));
-      document.getElementById('pdf-container').insertBefore(div, canvas);
-      document.getElementById('pdf-controls').style.display = 'none';
-      canvas.style.display = 'none';
+      console.error(err);
+      const container = document.getElementById('pdf-container');
+      container.innerHTML = `<div class="ui error message" style="text-align: center;">
+        <div class="header">無法載入 PDF / Failed to load PDF</div>
+        <p>${err.message}</p>
+        <p>（請確認 PDF 檔案已放置在可公開存取的目錄下，例如 <code>assets/</code>，且非 <code>_data/</code> 等特殊資料夾中。）</p>
+        <p><a href="${url}" target="_blank" class="ui button primary">點此直接下載或開啟 PDF (Click here to open)</a></p>
+      </div>`;
     });
 
     // Button Events
