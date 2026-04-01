@@ -3,6 +3,7 @@ $(function(){
   $('.ui.dropdown').dropdown();
   $('.ui.sticky').sticky();
   $('.ui.checkbox').checkbox();
+  $('.ui.accordion').accordion();
 });
 
 $(function () {
